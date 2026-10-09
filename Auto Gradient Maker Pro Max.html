@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>গ্রেডিয়েন্ট স্টুডিও</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#f4f1ec;--panel:#fff;--ink:#1d1b18;--mute:#7a756c;--line:#e4dfd7;--acc:#3a3be8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121211;--panel:#1c1b19;--ink:#f2efe9;--mute:#9b968c;--line:#2e2c29;--acc:#8c97ff}}
+:root[data-theme="dark"]{--bg:#121211;--panel:#1c1b19;--ink:#f2efe9;--mute:#9b968c;--line:#2e2c29;--acc:#8c97ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Hind Siliguri",Inter,system-ui,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:18px 14px 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:880px){.wrap{grid-template-columns:minmax(0,1fr) 340px;align-items:start}.side{position:sticky;top:14px}}
+h1{font-size:22px;margin:0;font-weight:700;letter-spacing:-.2px}
+.sub{color:var(--mute);margin:2px 0 12px;font-size:13px}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;justify-content:center}
+#cv{display:block;width:100%;max-width:780px;max-height:74vh;object-fit:contain;border-radius:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:11px}
+.card h2{font-size:12.5px;margin:0 0 9px;font-weight:600;color:var(--mute)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+button,select{font:inherit;font-size:13.5px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+button.on{border-color:var(--acc);color:var(--acc);font-weight:600}
+button.p{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+:root[data-theme="dark"] button.p,:root:not([data-theme="light"]) button.p{color:#111}
+button:disabled{opacity:.5}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.big{width:100%;padding:13px;font-size:16px;border-radius:12px}
+.sw{display:flex;gap:8px;flex-wrap:wrap}
+.sw label{display:grid;gap:3px;font-size:11px;color:var(--mute);justify-items:center}
+input[type=color]{-webkit-appearance:none;appearance:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;padding:0;background:none;cursor:pointer}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}input[type=color]::-webkit-color-swatch{border:0;border-radius:9px}
+.row{display:grid;grid-template-columns:62px 1fr 30px;gap:8px;align-items:center;font-size:13px;margin:5px 0}
+.row span:last-child{color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.strip{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px}
+.pal{display:flex;flex:none;border-radius:8px;overflow:hidden;border:1px solid var(--line);padding:0;width:76px;height:30px}
+.pal i{flex:1}
+.th{flex:none;width:74px;height:50px;padding:0;border-radius:8px;overflow:hidden;border:1px solid var(--line);background-size:cover}
+.note{font-size:12px;color:var(--mute);margin:7px 0 0}
+.tips{margin:0;padding-left:18px;font-size:12.5px;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+<main>
+  <h1>গ্রেডিয়েন্ট স্টুডিও</h1>
+  <p class="sub">ইউনিক রং জেনারেট করুন, সুন্দর মিশ্রণ আর গ্রেইন দিয়ে Adobe Stock-এর জন্য ডাউনলোড করুন।</p>
+  <div class="stage"><canvas id="cv" width="1000" height="666" aria-label="গ্রেডিয়েন্ট প্রিভিউ"></canvas></div>
+  <div class="card" style="margin-top:12px"><h2>আগের ডিজাইন (ক্লিক করলে ফিরে আসবে)</h2><div class="strip" id="hist"></div><p class="note" id="hn"></p><button id="rst" style="margin-top:8px">রেকর্ড মুছুন</button></div>
+</main>
+<aside class="side">
+  <div class="card">
+    <button class="p big" id="gen">✨ নতুন ইউনিক ডিজাইন</button>
+    <div class="seg" style="margin-top:10px" id="style"></div>
+  </div>
+  <div class="card">
+    <h2>রঙের ধরন</h2>
+    <div class="seg" id="tone"></div>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:10px"><input type="checkbox" id="dark"> গাঢ় ব্যাকগ্রাউন্ড</label>
+  </div>
+  <div class="card">
+    <h2>প্যালেট</h2>
+    <div class="sw" id="sw"></div>
+    <div class="seg" style="margin-top:10px"><button id="lay">ব্লব সাজান</button><button id="save">প্যালেট সেভ</button><button id="hex">হেক্স কপি</button></div>
+    <div class="strip" id="pals" style="margin-top:10px"></div>
+  </div>
+  <div class="card">
+    <h2>এডজাস্ট</h2>
+    <div class="row"><span>ব্লার</span><input type="range" id="blur" min="3" max="30"><span id="blurv"></span></div>
+    <div class="row"><span>গ্রেইন</span><input type="range" id="grain" min="0" max="100"><span id="grainv"></span></div>
+    <div class="row"><span>সাইজ</span><input type="range" id="size" min="30" max="120"><span id="sizev"></span></div>
+    <div class="row"><span>রেশিও</span><select id="ratio" style="grid-column:2/4"><option value="8000x5326">৩:২ — ৮০০০×৫৩২৬</option><option value="7680x4320">১৬:৯ — ৭৬৮০×৪৩২০</option><option value="6000x6000">১:১ — ৬০০০×৬০০০</option><option value="4800x6000">৪:৫ — ৪৮০০×৬০০০</option><option value="4320x7680">৯:১৬ — ৪৩২০×৭৬৮০</option></select></div>
+  </div>
+  <div class="card">
+    <h2>এক্সপোর্ট</h2>
+    <button class="p big" id="dl" style="font-size:15px">JPG ডাউনলোড</button>
+    <p class="note" id="dn">Adobe Stock-এ JPEG আপলোড করতে হয়, তাই JPG দেওয়া হয়েছে।</p>
+  </div>
+  <div class="card">
+    <h2>ZIP ব্যাচ ডাউনলোড</h2>
+    <button class="p big" id="zipb" style="font-size:15px">ZIP ডাউনলোড</button>
+    <button id="zclr" style="margin-top:8px">ব্যাচ খালি করুন</button>
+    <p class="note" id="zn"></p>
+  </div>
+  <div class="card">
+    <h2>বিক্রির জন্য টিপস</h2>
+    <ul class="tips"><li>৩–৪টা রঙেই সবচেয়ে ভালো মেশে, বেশি রং ঘোলা দেখায়।</li><li>গ্রেইন ৩০–৫০ রাখুন, এতে ব্যান্ডিং ঢাকা পড়ে।</li><li>একই প্যালেটের হালকা, গাঢ় ও পেস্টেল ভ্যারিয়েশন বানিয়ে সেট আপলোড করুন।</li><li>টাইটেল-কিওয়ার্ড ইংরেজিতে দিন (gradient, abstract background, blur)।</li></ul>
+  </div>
+</aside>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const R=(a,b)=>a+Math.random()*(b-a),P=a=>a[Math.floor(Math.random()*a.length)];
+function o2h(L,C,H){const f=(L,C,H)=>{const a=C*Math.cos(H*Math.PI/180),b=C*Math.sin(H*Math.PI/180);
+ const l=(L+.3963377774*a+.2158037573*b)**3,m=(L-.1055613458*a-.0638541728*b)**3,s=(L-.0894841775*a-1.291485548*b)**3;
+ return[4.0767416621*l-3.3077115913*m+.2309699292*s,-1.2684380046*l+2.6097574011*m-.3413193965*s,-.0041960863*l-.7034186147*m+1.707614701*s]};
+ let c=C,r=f(L,c,H);for(let i=0;i<40&&!r.every(v=>v>=-.001&&v<=1.001);i++){c*=.93;r=f(L,c,H)}
+ return"#"+r.map(v=>{v=Math.max(0,Math.min(1,v));v=v<=.0031308?12.92*v:1.055*v**(1/2.4)-.055;return Math.round(v*255).toString(16).padStart(2,"0")}).join("")}
+const PRE=[["#e4ddd3","#2f45e8","#f2561d","#18a9e0","#7d8cff"],["#f6e6dc","#ff7a59","#ffb36b","#9b5cff","#ff8fb8"],["#e2ebe3","#12a37f","#d4ea55","#2563ff","#b5f2d6"],["#efe4f2","#7040f2","#ff4fa3","#3cc8ff","#ffd3ea"],["#17142b","#4f46e5","#ff5a8a","#12d0c4","#a855f7"],["#f3ecd8","#e8512e","#f8b733","#2a7fa8","#f59a78"],["#dfe9f5","#4a7bff","#c9a7ff","#7fe3f0","#ffc7dc"],["#fbe9d7","#ff9f68","#ff6b8b","#c06cff","#ffd98a"]];
+const TONES={mix:"মিক্স",pastel:"পেস্টেল",vivid:"ভিভিড",deep:"ডিপ"},STY={blob:"ব্লব",silk:"সিল্ক ওয়েভ",mesh:"মেশ"};
+const HS=[[0,32,70,150],[0,150,210,60],[0,120,240,30],[0,25,50,180],[0,90,180,270],[0,45,200,245]];
+function genPal(tone,dark){const h=R(0,360),sp=P(HS).map(x=>(h+x+R(-9,9)+360)%360);
+ const T={pastel:[[.9,.07],[.86,.09],[.92,.06]],vivid:[[.74,.17],[.7,.19],[.78,.15]],deep:[[.56,.15],[.6,.16],[.52,.13]],mix:[[.9,.07],[.76,.16],[.7,.17],[.83,.12],[.65,.15]]}[tone];
+ const cols=sp.map(H=>{let[L,C]=P(T);L+=R(-.04,.04);if(H>35&&H<100&&L<.72)L+=.12;return o2h(L,C*R(.88,1.08),H)});
+ const bg=dark?o2h(R(.24,.3),R(.03,.06),h+R(-25,25)):o2h(R(.94,.975),R(.012,.035),h+R(-30,30));return[bg,...cols]}
+let S={c:PRE[0].slice(),b:[],blur:14,grain:18,size:70,ratio:"8000x5326",style:"blob",tone:"mix",dark:false},HIST=[];
+function lay(){const n=S.c.length-1,s=S.style;
+ S.b=Array.from({length:n},(_,i)=>{
+  if(s=="silk")return{x:R(-5,105),y:(i+.5)/n*100+R(-9,9),w:R(1.7,2.7),h:R(.35,.6),r:R(-35,35)};
+  if(s=="mesh")return{x:[15,82,30,85,50][i%5]+R(-9,9),y:[20,25,80,85,50][i%5]+R(-9,9),w:R(.7,1),h:R(.7,1),r:0};
+  return{x:R(10,90),y:R(10,90),w:R(.8,1.3),h:R(.8,1.3),r:R(0,180)}})}
+lay();S.b=[{x:30,y:28,w:1.2,h:1,r:0},{x:48,y:78,w:1.2,h:1.2,r:0},{x:92,y:88,w:.8,h:.8,r:0},{x:60,y:45,w:.7,h:.7,r:0}];
+const mk=(w,h)=>{const c=document.createElement("canvas");c.width=w;c.height=h;return c};
+const NT=mk(512,512);(()=>{const x=NT.getContext("2d"),d=x.createImageData(512,512);for(let i=0;i<d.data.length;i+=4){const v=128+(Math.random()+Math.random()-1)*70;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0)})();
+function blurInto(ctx,src,px,W,H){if("filter" in ctx){ctx.filter=`blur(${px}px)`;ctx.drawImage(src,0,0,W,H);ctx.filter="none"}
+ else{const f=Math.max(2,px*1.2),sm=mk(Math.ceil(W/f),Math.ceil(H/f));sm.getContext("2d").drawImage(src,0,0,sm.width,sm.height);ctx.imageSmoothingQuality="high";ctx.drawImage(sm,0,0,W,H)}}
+function dims(){return S.ratio.split("x").map(Number)}
+function build(W,H,st){st=st||S;const W0=Math.min(W,1000),H0=Math.round(W0*H/W),silk=st.style=="silk",sg=st.blur/100*W0*(silk?.5:1);
+ const lay0=(hs,col)=>{const L=mk(W0,H0),x=L.getContext("2d"),d=st.size*.006*W0;st.b.forEach((b,i)=>{x.fillStyle=col||st.c[i+1];x.beginPath();x.ellipse(b.x/100*W0,b.y/100*H0,d*b.w/2,d*b.h*hs/2,b.r*Math.PI/180,0,7);x.fill()});return L};
+ const M=mk(W0,H0),mx=M.getContext("2d");mx.fillStyle=st.c[0];mx.fillRect(0,0,W0,H0);blurInto(mx,lay0(1),sg,W0,H0);
+ if(silk){const S2=mk(W0,H0),sx=S2.getContext("2d");blurInto(sx,lay0(.16,"#fff"),sg*.3,W0,H0);mx.globalCompositeOperation="soft-light";mx.globalAlpha=.7;mx.drawImage(S2,0,0);mx.globalAlpha=1;mx.globalCompositeOperation="source-over"}
+ const M2=mk(W0,H0),m2=M2.getContext("2d");if("filter" in m2)m2.filter="saturate(1.15) brightness(1.03)";m2.drawImage(M,0,0);m2.filter="none";const O=mk(W,H),ox=O.getContext("2d");ox.imageSmoothingQuality="high";ox.drawImage(M2,0,0,W,H);
+ ox.globalCompositeOperation="overlay";ox.globalAlpha=Math.min(1,st.grain/100*.8);const pt=ox.createPattern(NT,"repeat"),k=Math.max(1,W/1600);if(pt.setTransform)pt.setTransform(new DOMMatrix().scale(k));ox.fillStyle=pt;ox.fillRect(0,0,W,H);return O}
+function render(){const[w,h]=dims(),cv=$("cv");cv.width=1000;cv.height=Math.round(1000*h/w);cv.getContext("2d").drawImage(build(1000,cv.height),0,0);ui()}
+let raf=0;const soon=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(render)};
+function ui(){$("sw").innerHTML=S.c.map((c,i)=>`<label>${i?"রং "+i:"ব্যাকগ্রাউন্ড"}<input type="color" value="${c}" data-i="${i}" aria-label="রং ${i}"></label>`).join("");
+ document.querySelectorAll("#sw input").forEach(e=>e.oninput=()=>{S.c[+e.dataset.i]=e.value;soon()});
+ $("blurv").textContent=S.blur;$("grainv").textContent=S.grain;$("sizev").textContent=S.size;
+ $("style").innerHTML=Object.entries(STY).map(([k,v])=>`<button data-k="${k}" class="${S.style==k?"on":""}">${v}</button>`).join("");
+ $("tone").innerHTML=Object.entries(TONES).map(([k,v])=>`<button data-k="${k}" class="${S.tone==k?"on":""}">${v}</button>`).join("");
+ document.querySelectorAll("#style button").forEach(b=>b.onclick=()=>{S.style=b.dataset.k;lay();render()});
+ document.querySelectorAll("#tone button").forEach(b=>b.onclick=()=>{S.tone=b.dataset.k;gen()})}
+function snap(){return JSON.parse(JSON.stringify(S))}
+let BATCH=[];
+function pushHist(){const s=snap(),[w,h]=dims();BATCH.push(s);BATCH=BATCH.slice(-200);bcnt();HIST.unshift({s,u:build(240,Math.round(240*h/w),s).toDataURL("image/jpeg",.7)});HIST=HIST.slice(0,14);drawHist()}
+function drawHist(){$("hist").innerHTML=HIST.map((x,i)=>`<button class="th" data-i="${i}" style="background-image:url(${x.u})" aria-label="ডিজাইন ${i+1}"></button>`).join("")||'<span class="note">এখনও কিছু নেই</span>';
+ document.querySelectorAll(".th").forEach(b=>b.onclick=()=>{S=JSON.parse(JSON.stringify(HIST[+b.dataset.i].s));$("ratio").value=S.ratio;sync();render()})}
+const FK="gsfp";let MEM=[];
+const fps=()=>{try{return JSON.parse(localStorage.getItem(FK)||"[]")}catch(e){return MEM}};
+const putFp=f=>{MEM.push(f);try{const a=JSON.parse(localStorage.getItem(FK)||"[]");a.push(f);localStorage.setItem(FK,JSON.stringify(a.slice(-1500)))}catch(e){}};
+const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+const cd=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+const fp=()=>({c:S.c.slice(),p:S.b.map(b=>[b.x,b.y]),s:S.style});
+function pd(a,b){const A=a.map(rgb),B=b.map(rgb);return A.reduce((t,x)=>t+Math.min(...B.map(y=>cd(x,y))),0)/A.length}
+function ld2(a,b){return a.reduce((t,x)=>t+Math.min(...b.map(y=>Math.hypot(x[0]-y[0],x[1]-y[1]))),0)/a.length}
+function novelty(f,all){let m=1e9;for(const g of all){if(g.s!=f.s)continue;m=Math.min(m,pd(f.c,g.c)+.6*ld2(f.p,g.p))}return m}
+function uniq(make){const all=fps();let best=null,bs=-1;for(let t=0;t<80;t++){make(t);const f=fp(),n=novelty(f,all);if(n>bs){bs=n;best=snap()}if(n>=80)break}S=best;putFp(fp());return bs}
+function cnt(){$("hn").textContent=`স্পেস চাপলেও নতুন ডিজাইন আসে। এ পর্যন্ত ${fps().length}টা ডিজাইন রেকর্ড আছে, নতুনটা এগুলোর কোনোটার সাথে মিলবে না।`}
+function gen(){uniq(()=>{S.c=genPal(S.tone,S.dark);lay()});render();pushHist();cnt()}
+function sync(){["blur","grain","size"].forEach(k=>$(k).value=S[k]);$("dark").checked=S.dark}
+function ld(){try{return JSON.parse(localStorage.getItem("gsp")||"[]")}catch(e){return[]}}
+function pals(){const all=PRE.concat(ld());$("pals").innerHTML=all.map((p,i)=>`<button class="pal" data-i="${i}" aria-label="প্যালেট ${i+1}">${p.map(c=>`<i style="background:${c}"></i>`).join("")}</button>`).join("");
+ document.querySelectorAll(".pal").forEach(b=>b.onclick=()=>{const base=all[+b.dataset.i];uniq(t=>{const d=t?R(-40,40)*(1+t/15):0;S.c=base.map(c=>d?rot(c,d):c);lay()});render();pushHist();cnt()})}
+function rot(h,d){const[r,g,b]=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,dd=mx-mn;let H=0,s=0;if(dd){s=dd/(1-Math.abs(2*l-1));H=mx==r?((g-b)/dd+6)%6:mx==g?(b-r)/dd+2:(r-g)/dd+4;H*=60}H=(H+d+360)%360;const a=s*Math.min(l,1-l),f=n=>{const k=(n+H/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1))};return"#"+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,"0")).join("")}
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1600)}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast("কপি হয়েছে")}catch(e){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");toast("কপি হয়েছে")}catch(_){toast("কপি করা যায়নি")}a.remove()}}
+$("gen").onclick=gen;$("lay").onclick=()=>{uniq(()=>lay());render();pushHist();cnt()};$("hex").onclick=()=>copy(S.c.join(", "));
+$("save").onclick=()=>{try{const s=ld();s.push(S.c.slice());localStorage.setItem("gsp",JSON.stringify(s.slice(-10)));toast("প্যালেট সেভ হয়েছে")}catch(e){toast("সেভ করা যায়নি")}pals()};
+$("dark").onchange=e=>{S.dark=e.target.checked;gen()};
+["blur","grain","size"].forEach(k=>$(k).oninput=e=>{S[k]=+e.target.value;soon()});
+$("ratio").onchange=e=>{S.ratio=e.target.value;render()};
+document.addEventListener("keydown",e=>{if(e.code=="Space"&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName)){e.preventDefault();gen()}});
+let DL=null;
+function plain(n,b){const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),120000)}
+async function saveFile(n,b){if(DL){try{return await DL.save({filename:n,data:b})}catch(e){if(e&&["declined","rate_limited","too_large"].includes(e.code))throw e}}plain(n,b)}
+async function initDl(){try{DL=window.claude&&await claude.use("downloads")}catch(e){}}
+$("dl").onclick=async()=>{let[w,h]=dims();$("dl").disabled=true;$("dn").textContent="ছবি তৈরি হচ্ছে, একটু অপেক্ষা করুন…";
+ try{let b=null;for(const f of[1,.5,.25]){try{const W=Math.round(w*f),H=Math.round(h*f);b=await new Promise(r=>build(W,H).toBlob(r,"image/jpeg",.95));if(b){$("dn").textContent=f<1?`ডিভাইসের সীমার কারণে ${W}×${H} px-এ তৈরি হয়েছে। ফুল সাইজের জন্য ডেস্কটপ ব্যবহার করুন।`:"Adobe Stock-এ JPEG আপলোড করতে হয়, তাই JPG দেওয়া হয়েছে।";w=W;h=H;break}}catch(e){}}
+  if(!b)throw 0;putFp(fp());cnt();await saveFile(`gradient-${w}x${h}-${Date.now().toString(36)}.jpg`,b);toast("সেভ হয়েছে")}
+ catch(e){$("dn").textContent=e&&e.code=="declined"?"":"ডাউনলোড করা যায়নি, আবার চেষ্টা করুন।"}
+ $("dl").disabled=false};
+$("rst").onclick=()=>{MEM=[];try{localStorage.removeItem(FK)}catch(e){}cnt();toast("রেকর্ড মুছেছে")};
+const CT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc(u){let c=-1;for(let i=0;i<u.length;i++)c=CT[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0}
+async function zip(files){const parts=[],cen=[],te=new TextEncoder();let off=0;
+ for(const f of files){const d=new Uint8Array(await f.blob.arrayBuffer()),n=te.encode(f.name),c=crc(d),z=f.blob.size;
+  const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(12,0x21,true);h.setUint32(14,c,true);h.setUint32(18,z,true);h.setUint32(22,z,true);h.setUint16(26,n.length,true);
+  parts.push(h.buffer,n,f.blob);
+  const e=new DataView(new ArrayBuffer(46));e.setUint32(0,0x02014b50,true);e.setUint16(4,20,true);e.setUint16(6,20,true);e.setUint16(8,0x0800,true);e.setUint16(14,0x21,true);e.setUint32(16,c,true);e.setUint32(20,z,true);e.setUint32(24,z,true);e.setUint16(28,n.length,true);e.setUint32(42,off,true);
+  cen.push(e.buffer,n);off+=30+n.length+z}
+ const cs=cen.reduce((t,x)=>t+x.byteLength,0),q=new DataView(new ArrayBuffer(22));q.setUint32(0,0x06054b50,true);q.setUint16(8,files.length,true);q.setUint16(10,files.length,true);q.setUint32(12,cs,true);q.setUint32(16,off,true);
+ return new Blob([...parts,...cen,q.buffer],{type:"application/zip"})}
+function bcnt(){$("zipb").textContent=`ZIP ডাউনলোড (${BATCH.length}টা ছবি)`;$("zipb").disabled=!BATCH.length;$("zn").textContent=BATCH.length?"প্রতিবার নতুন ডিজাইন বানালে সেটা এখানে জমা হয়। ZIP-এ সব ছবি কোনো ছোট না করে পূর্ণ সাইজে JPG হয়ে যাবে।":"নতুন ডিজাইন বানালে এখানে জমা হবে।"}
+$("zclr").onclick=()=>{BATCH=[];bcnt();toast("ব্যাচ খালি হয়েছে")};
+$("zipb").onclick=async()=>{if(!BATCH.length)return;const list=BATCH.slice(),files=[],stamp=Date.now().toString(36);let done=0,total=0,part=0;$("zipb").disabled=true;$("zclr").disabled=true;
+ const flush=async(mid)=>{if(!files.length)return;$("zn").textContent="ZIP বানানো হচ্ছে…";const z=await zip(files.splice(0)),nm=`gradient-batch-${stamp}${mid||part?"-part"+(++part):""}.zip`;total=0;await saveFile(nm,z)};
+ try{for(let i=0;i<list.length;i++){$("zn").textContent=`${i+1}/${list.length} পূর্ণ সাইজে তৈরি হচ্ছে… ট্যাব খোলা রাখুন।`;await new Promise(r=>setTimeout(r,40));
+   const st=list[i],[w,h]=st.ratio.split("x").map(Number);let b=null;
+   for(let t=0;t<3&&!b;t++){try{const c=build(w,h,st);b=await new Promise(r=>c.toBlob(r,"image/jpeg",.95));c.width=c.height=0}catch(e){b=null}if(!b)await new Promise(r=>setTimeout(r,400))}
+   if(!b){$("zn").textContent=`${i+1} নম্বর ছবি পূর্ণ সাইজে বানানো যায়নি (মেমরি কম)। এর আগের ${i}টা ZIP করা হচ্ছে।`;break}
+   if(total+b.size>3.5e9)await flush(1);
+   files.push({name:`gradient-${String(i+1).padStart(3,"0")}-${w}x${h}.jpg`,blob:b});total+=b.size;done++}
+  await flush();toast("ZIP সেভ হয়েছে");if(done==list.length)$("zn").textContent=`${done}টা ছবি পূর্ণ সাইজে ZIP হয়েছে।`}
+ catch(e){files.length=0;$("zn").textContent=e&&e.code=="declined"?"ডাউনলোড বাতিল হয়েছে।":`ZIP বানানো যায়নি (${(e&&(e.code||e.message))||e})। আবার চেষ্টা করুন।`}
+ $("zclr").disabled=false;$("zipb").disabled=!BATCH.length};
+sync();pals();render();pushHist();BATCH=[];initDl().then(bcnt);cnt();
+</script>
+</body>
+</html>
